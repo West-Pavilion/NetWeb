@@ -1,6 +1,6 @@
 # NetWeb - Network Testing Tool
 
-[![CI](https://github.com/YOUR_USERNAME/NetWeb/workflows/CI/badge.svg)](https://github.com/West-Pavilion/NetWeb/actions)
+[![CI](https://github.com/West-Pavilion/NetWeb/workflows/CI/badge.svg)](https://github.com/West-Pavilion/NetWeb/actions)
 [![Release](https://github.com/West-Pavilion/NetWeb/workflows/Release%20to%20GitHub%20Packages/badge.svg)](https://github.com/YOUR_USERNAME/NetWeb/actions)
 
 一个功能强大的网络连通性测试工具，使用 Go 语言构建后端 API，React 构建前端界面。
