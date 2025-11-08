@@ -1,5 +1,8 @@
 # NetWeb - Network Testing Tool
 
+[![CI](https://github.com/YOUR_USERNAME/NetWeb/workflows/CI/badge.svg)](https://github.com/West-Pavilion/NetWeb/actions)
+[![Release](https://github.com/West-Pavilion/NetWeb/workflows/Release%20to%20GitHub%20Packages/badge.svg)](https://github.com/YOUR_USERNAME/NetWeb/actions)
+
 一个功能强大的网络连通性测试工具，使用 Go 语言构建后端 API，React 构建前端界面。
 
 ## 功能特性
@@ -42,9 +45,48 @@ NetWeb/
         └── App.css         # 应用样式
 ```
 
-## 安装和运行
+## 快速开始
 
-### 前置要求
+### 使用 Docker（推荐）
+
+最快的方式是使用 Docker 运行应用：
+
+#### 从 GitHub Packages 拉取镜像
+
+```bash
+# 拉取最新版本
+docker pull ghcr.io/west-pavilion/netweb:latest
+
+# 运行容器
+docker run -d -p 8080:8080 --name netweb ghcr.io/west-pavilion/netweb:latest
+```
+
+访问 `http://localhost:8080` 即可使用！
+
+#### 使用 Docker Compose
+
+```bash
+# 克隆仓库
+git clone https://github.com/West-Pavilion/NetWeb.git
+cd NetWeb
+
+# 使用 Docker Compose 启动
+docker-compose up -d
+```
+
+#### 本地构建 Docker 镜像
+
+```bash
+# 构建镜像
+docker build -t netweb .
+
+# 运行容器
+docker run -d -p 8080:8080 --name netweb netweb
+```
+
+### 从源代码运行
+
+#### 前置要求
 
 - Go 1.25 或更高版本
 - Node.js 14+ 和 npm
@@ -198,6 +240,61 @@ go run main.go
 - Ping: 15 秒
 - Traceroute: 60 秒
 - Custom: 30 秒
+
+## CI/CD 和自动部署
+
+本项目已配置完整的 GitHub Actions CI/CD 流程。
+
+### 持续集成 (CI)
+
+当代码推送到 `main` 或 `develop` 分支，或创建 Pull Request 时，会自动运行：
+
+1. **后端构建**: 编译 Go 代码并运行 `go vet`
+2. **前端构建**: 构建 React 应用
+3. **集成测试**: 启动服务器并运行端到端测试
+
+查看 CI 状态：[Actions 页面](https://github.com/West-Pavilion/NetWeb/actions)
+
+### 发布流程
+
+#### 创建新版本
+
+1. 创建并推送标签：
+
+```bash
+git tag -a v1.0.0 -m "Release version 1.0.0"
+git push origin v1.0.0
+```
+
+2. GitHub Actions 会自动：
+   - 构建多平台 Docker 镜像（amd64, arm64）
+   - 推送到 GitHub Container Registry
+   - 为 Linux、Windows、macOS 构建二进制文件
+   - 创建 GitHub Release 并上传构建产物
+
+#### 使用发布的版本
+
+**Docker 镜像：**
+
+```bash
+# 拉取特定版本
+docker pull ghcr.io/west-pavilion/netweb:v0.1
+
+# 运行
+docker run -d -p 8080:8080 ghcr.io/west-pavilion/netweb:v0.1
+```
+
+**二进制文件：**
+
+从 [Releases 页面](https://github.com/West-Pavilion/NetWeb/releases) 下载适合你系统的预编译二进制文件。
+
+### 手动触发发布
+
+也可以在 Actions 页面手动触发发布工作流：
+
+1. 访问 [Actions](https://github.com/West-Pavilion/NetWeb/actions)
+2. 选择 "Release to GitHub Packages"
+3. 点击 "Run workflow"
 
 ## 故障排除
 

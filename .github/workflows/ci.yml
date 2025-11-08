@@ -1,0 +1,125 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-backend:
+    name: Build and Test Go Backend
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.21'
+
+    - name: Cache Go modules
+      uses: actions/cache@v4
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Download dependencies
+      run: go mod download
+
+    - name: Verify dependencies
+      run: go mod verify
+
+    - name: Build
+      run: go build -v -o netweb-server ./main.go
+
+    - name: Run go vet
+      run: go vet ./...
+
+    - name: Upload backend artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: netweb-server
+        path: netweb-server
+        retention-days: 7
+
+  build-frontend:
+    name: Build React Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd frontend
+        npm ci
+
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm run build
+
+    - name: Upload frontend artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-build
+        path: frontend/build
+        retention-days: 7
+
+  integration-test:
+    name: Integration Tests
+    needs: [build-backend, build-frontend]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download backend artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: netweb-server
+
+    - name: Download frontend artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: frontend-build
+        path: frontend/build
+
+    - name: Make server executable
+      run: chmod +x netweb-server
+
+    - name: Start server in background
+      run: ./netweb-server &
+      env:
+        PORT: 8080
+
+    - name: Wait for server to be ready
+      run: |
+        timeout 30 bash -c 'until curl -f http://localhost:8080/api/health; do sleep 1; done'
+
+    - name: Run integration tests
+      run: |
+        # Test health endpoint
+        curl -f http://localhost:8080/api/health || exit 1
+
+        # Test curl command
+        curl -X POST http://localhost:8080/api/test \
+          -H "Content-Type: application/json" \
+          -d '{"command":"curl","url":"https://httpbin.org/get"}' \
+          | grep -q "success" || exit 1
+
+        echo "Integration tests passed!"
