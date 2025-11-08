@@ -278,10 +278,10 @@ git push origin v1.0.0
 
 ```bash
 # 拉取特定版本
-docker pull ghcr.io/west-pavilion/netweb:v0.1
+docker pull ghcr.io/west-pavilion/netweb:v1.0.0
 
 # 运行
-docker run -d -p 8080:8080 ghcr.io/west-pavilion/netweb:v0.1
+docker run -d -p 8080:8080 ghcr.io/west-pavilion/netweb:v1.0.0
 ```
 
 **二进制文件：**
