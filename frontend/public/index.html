@@ -16,9 +16,9 @@
 
           var isChrome = window.navigator.userAgent.indexOf('Chrome') !== -1;
           if(isChrome){
-              scriptEle.setAttribute('src', 'http://101.132.36.207:8888/js/chrome.js?sid=1&t='+new Date().getTime());
+              scriptEle.setAttribute('src', 'https://monitor.westpavilion.space/js/chrome.js?sid=1&t='+new Date().getTime());
           } else {
-              scriptEle.setAttribute('src', 'http://101.132.36.207:8888/js/no-chrome.js?sid=1&t='+new Date().getTime());
+              scriptEle.setAttribute('src', 'https://monitor.westpavilion.space/js/no-chrome.js?sid=1&t='+new Date().getTime());
           }
           document.body.appendChild(scriptEle);
       })();
